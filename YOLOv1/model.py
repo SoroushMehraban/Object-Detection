@@ -110,5 +110,3 @@ def test(split_size=7, num_boxes=2, num_classes=20):
     model = YOLOv1(in_channels=3, split_size=split_size, num_boxes=num_boxes, num_classes=num_classes)
     x = torch.randn(2, 3, 448, 448)
     print(model(x).shape)
-
-test()

@@ -2,7 +2,7 @@ import torch
 import os
 import pandas as pd
 from PIL import Image
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 
 
 class VOCDataset(Dataset):
@@ -32,14 +32,10 @@ class VOCDataset(Dataset):
 
         img_path = os.path.join(self.img_dir, self.annotations.iloc[ix, 0])
         image = Image.open(img_path)
-        boxes = torch.Tensor(boxes)
-
-        if self.transform:
-            image, boxes = self.transform(image, boxes)
 
         label_matrix = torch.zeros((self.S, self.S, self.C + 5 * self.B))
         for box in boxes:
-            class_label, x, y, width, height = box.tolist()
+            class_label, x, y, width, height = box
             class_label = int(class_label)
             i, j = int(self.S * y), int(self.S * x)
             x_cell, y_cell = self.S * x - j, self.S * y - i
@@ -52,3 +48,15 @@ class VOCDataset(Dataset):
                 label_matrix[i, j, class_label] = 1
 
         return image, label_matrix
+
+    def collate_fn(self, batch):
+        images, bboxes = list(zip(*batch))
+        if self.transform:
+            images = [self.transform(img)[None] for img in images]
+
+        bboxes = [box[None] for box in bboxes]
+
+        images = torch.cat(images)
+        bboxes = torch.cat(bboxes)
+
+        return images, bboxes

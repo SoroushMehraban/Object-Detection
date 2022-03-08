@@ -8,7 +8,7 @@ def non_max_suppression(bounding_boxes, iou_threshold, probability_threshold, bo
 
     assert type(bounding_boxes) == list
 
-    bounding_boxes = [box for box in bounding_boxes if bounding_boxes[1] > probability_threshold]
+    bounding_boxes = [box for box in bounding_boxes if box[1] > probability_threshold]
     bounding_boxes_after_nms = []
     bounding_boxes = sorted(bounding_boxes, key=lambda x: x[1], reverse=True)
 

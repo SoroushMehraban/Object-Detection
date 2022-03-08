@@ -80,7 +80,7 @@ class YOLOLoss(nn.Module):
         # ==================
         class_loss = self.mse(
             exists_box * predictions[..., :20],
-            exists_box * target[..., 20]
+            exists_box * target[..., :20]
         )
 
         loss = self.lambda_coord * box_loss \
